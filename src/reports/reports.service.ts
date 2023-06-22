@@ -3,31 +3,20 @@ import * as moment from 'moment';
 import { Op, Sequelize } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from 'src/auth/users.model';
-import { TodoList } from 'src/todolist/todolist.model';
 import { Task } from 'src/tasks/tasks.model';
 import { ITasksCount } from './reports.interfaces';
+import { TodolistService } from 'src/todolist/todolist.service';
 
 @Injectable()
 export class ReportsService {
   constructor(
     @InjectModel(Task)
     private taskModel: typeof Task,
-    @InjectModel(TodoList)
-    private todoListModel: typeof TodoList,
+    private todoListService: TodolistService,
   ) {}
 
-  private getTodoListByUser(userId: number): Promise<TodoList> {
-    return this.todoListModel.findOne({
-      where: { userId: userId },
-      attributes: ['id'],
-      include: 'tasks',
-    });
-  }
-
   async getTaskCount(user: User): Promise<ITasksCount> {
-    const todolist = await this.getTodoListByUser(user.id);
-    if (!todolist)
-      return { totalTasks: 0, completedTasks: 0, remainingTasks: 0 };
+    const todolist = await this.todoListService.getTodoListForUser(user.id);
     const totalTasks = await this.taskModel.findAndCountAll({
       where: { todoListId: todolist.id },
     });
@@ -44,8 +33,7 @@ export class ReportsService {
   }
 
   async getAvgTasksPerDay(user: User): Promise<number> {
-    const todolist = await this.getTodoListByUser(user.id);
-    if (!todolist) return 0;
+    const todolist = await this.todoListService.getTodoListForUser(user.id);
     const daysSinceAccountCreation = moment().diff(user.createdAt, 'days');
     if (daysSinceAccountCreation === 0) {
       // If no days have passed since the account creation
@@ -58,8 +46,7 @@ export class ReportsService {
   }
 
   async getTasksNotCompletedOnTime(user: User): Promise<number> {
-    const todolist = await this.getTodoListByUser(user.id);
-    if (!todolist) return 0;
+    const todolist = await this.todoListService.getTodoListForUser(user.id);
     return await this.taskModel.count({
       where: {
         todoListId: todolist.id,
@@ -70,8 +57,7 @@ export class ReportsService {
   }
 
   async getDateWithMostCompletedTasks(user: User): Promise<Date | null> {
-    const todolist = await this.getTodoListByUser(user.id);
-    if (!todolist) return null;
+    const todolist = await this.todoListService.getTodoListForUser(user.id);
     const tasks = await this.taskModel.findAll({
       where: { todoListId: todolist.id, completionStatus: true },
       attributes: ['completionDateTime'],
