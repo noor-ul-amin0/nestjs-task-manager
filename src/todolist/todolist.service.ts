@@ -10,6 +10,16 @@ export class TodolistService {
     @InjectModel(TodoList)
     private todolistModel: typeof TodoList,
   ) {}
+  async getTodoListForUser(userId: number): Promise<TodoList> {
+    const todolist = await this.todolistModel.findOne({
+      where: { userId },
+      attributes: ['id'],
+    });
+    if (!todolist) {
+      throw new ForbiddenException('Please add a Todo list first');
+    }
+    return todolist;
+  }
   async create(
     createTodolistDto: CreateTodolistDto,
     user: User,
