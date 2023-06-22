@@ -10,5 +10,6 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [SequelizeModule.forFeature([TodoList, Task]), AuthModule],
   controllers: [TodolistController],
   providers: [TodolistService],
+  exports: [TodolistService],
 })
 export class TodolistModule {}
