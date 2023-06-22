@@ -1,36 +1,20 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
 import { User } from 'src/auth/users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Task } from './tasks.model';
-import { TodoList } from 'src/todolist/todolist.model';
+import { TodolistService } from 'src/todolist/todolist.service';
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectModel(Task)
     private taskModel: typeof Task,
-    @InjectModel(TodoList)
-    private todoListModel: typeof TodoList,
+    private todolistsService: TodolistService,
   ) {}
 
-  private async getTodoListForUser(userId: number): Promise<TodoList> {
-    const todolist = await this.todoListModel.findOne({
-      where: { userId },
-      attributes: ['id'],
-    });
-    if (!todolist) {
-      throw new ForbiddenException('Please add a Todo list first');
-    }
-    return todolist;
-  }
-
   async create(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
-    const todolist = await this.getTodoListForUser(user.id);
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
     return this.taskModel.create({
       ...createTaskDto,
       userId: user.id,
@@ -39,7 +23,7 @@ export class TasksService {
   }
 
   async findAll(user: User): Promise<Task[]> {
-    const todolist = await this.getTodoListForUser(user.id);
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
     if (!todolist) return [];
     return this.taskModel.findAll({ where: { todoListId: todolist.id } });
   }
@@ -49,7 +33,7 @@ export class TasksService {
     updateTaskDto: UpdateTaskDto,
     user: User,
   ): Promise<Task> {
-    const todolist = await this.getTodoListForUser(user.id);
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
     const task = await this.taskModel.findOne({
       where: { id, todoListId: todolist.id },
     });
@@ -58,7 +42,7 @@ export class TasksService {
   }
 
   async remove(id: number, user: User): Promise<void> {
-    const todolist = await this.getTodoListForUser(user.id);
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
     const task = await this.taskModel.findOne({
       where: { id, todoListId: todolist.id },
     });
@@ -67,7 +51,7 @@ export class TasksService {
   }
 
   async complete(id: number, user: User): Promise<Task> {
-    const todolist = await this.getTodoListForUser(user.id);
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
     const task = await this.taskModel.findOne({
       where: { id, todoListId: todolist.id },
     });
@@ -80,7 +64,7 @@ export class TasksService {
   }
 
   async similar(user: User): Promise<Task[]> {
-    const todolist = await this.getTodoListForUser(user.id);
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
     /*Return user a list of similar tasks. Two tasks A and B are considered similar if all the words in the task A exist in task B or vice versa.*/
     const tasks = await this.taskModel.findAll({
       where: { todoListId: todolist.id },

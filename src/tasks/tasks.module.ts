@@ -4,10 +4,10 @@ import { TasksController } from './tasks.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { Task } from './tasks.model';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { TodoList } from 'src/todolist/todolist.model';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { TodolistModule } from 'src/todolist/todolist.module';
 
 @Module({
   imports: [
@@ -21,8 +21,9 @@ import { extname } from 'path';
         },
       }),
     }),
-    SequelizeModule.forFeature([Task, TodoList]),
+    SequelizeModule.forFeature([Task]),
     AuthModule,
+    TodolistModule,
   ],
   controllers: [TasksController],
   providers: [TasksService],
