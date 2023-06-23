@@ -5,20 +5,43 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/users.model';
 import { TodoList } from './todolist.model';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('todolist')
 @Controller('todolist')
 @UseGuards(AuthGuard())
 export class TodolistController {
   constructor(private readonly todolistService: TodolistService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new todo list' })
+  @ApiBody({ type: CreateTodolistDto, description: 'Todo list data' })
+  @ApiCreatedResponse({
+    type: TodoList,
+    description: 'The created todo list',
+  })
+  @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
   create(
     @Body() createTodolistDto: CreateTodolistDto,
     @GetUser() user: User,
   ): Promise<TodoList> {
     return this.todolistService.create(createTodolistDto, user);
   }
+
   @Get()
+  @ApiOperation({ summary: 'Get a todo list' })
+  @ApiResponse({
+    status: 200,
+    type: TodoList,
+    description: 'The retrieved todo list',
+  })
   get(@GetUser() user: User): Promise<TodoList> {
     return this.todolistService.findOne(user);
   }
