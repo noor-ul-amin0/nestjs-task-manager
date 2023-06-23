@@ -55,7 +55,7 @@ export class User extends Model<User> {
   updatedAt: Date;
 
   @HasOne(() => TodoList)
-  todoList: TodoList[];
+  todoList: TodoList;
 
   @BeforeUpdate
   @BeforeCreate
