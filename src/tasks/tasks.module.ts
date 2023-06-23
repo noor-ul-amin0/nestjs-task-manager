@@ -8,6 +8,8 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { TodolistModule } from 'src/todolist/todolist.module';
+import { MailService } from 'src/mail/mail.service';
+import { TasksScheduler } from './tasks.scheduler';
 
 @Module({
   imports: [
@@ -26,6 +28,6 @@ import { TodolistModule } from 'src/todolist/todolist.module';
     TodolistModule,
   ],
   controllers: [TasksController],
-  providers: [TasksService],
+  providers: [TasksService, MailService, TasksScheduler],
 })
 export class TasksModule {}
