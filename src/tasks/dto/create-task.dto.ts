@@ -1,36 +1,45 @@
 import { IsDateString, IsBoolean, IsString, IsOptional } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateTaskDto {
   @IsString()
+  @ApiProperty({ description: 'Title of the task' })
   title: string;
 
   @IsString()
   @IsOptional()
+  @ApiPropertyOptional({ description: 'Description of the task' })
   description?: string;
 
   @IsString()
   @IsOptional()
+  @ApiPropertyOptional({ description: 'File attachments for the task' })
   fileAttachments?: string[];
 
   @IsDateString()
   @IsOptional()
-  dueDateTime?: Date;
+  @ApiPropertyOptional({ description: 'Due date and time for the task' })
+  dueDateTime?: string;
 
   @IsBoolean()
   @IsOptional()
+  @ApiPropertyOptional({ description: 'Completion status of the task' })
   completionStatus?: boolean;
 }
 
 export class UpdateTaskDto {
   @IsString()
   @IsOptional()
+  @ApiPropertyOptional({ description: 'Title of the task' })
   title?: string;
 
   @IsString()
   @IsOptional()
+  @ApiPropertyOptional({ description: 'Description of the task' })
   description?: string;
 
   @IsString()
   @IsOptional()
+  @ApiPropertyOptional({ description: 'File attachments for the task' })
   fileAttachments?: string[];
 }
