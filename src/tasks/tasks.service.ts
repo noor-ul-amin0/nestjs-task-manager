@@ -4,6 +4,9 @@ import { User } from 'src/auth/users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Task } from './tasks.model';
 import { TodolistService } from 'src/todolist/todolist.service';
+import * as moment from 'moment';
+import { Op } from 'sequelize';
+import { TodoList } from 'src/todolist/todolist.model';
 
 @Injectable()
 export class TasksService {
@@ -95,5 +98,28 @@ export class TasksService {
     }
 
     return similarTasks;
+  }
+
+  async getTasksDueToday(): Promise<Task[]> {
+    const todayStart = moment().startOf('day').toDate();
+    const todayEnd = moment().endOf('day').toDate();
+
+    return this.taskModel.findAll({
+      where: {
+        dueDateTime: {
+          [Op.between]: [todayStart, todayEnd],
+        },
+      },
+      include: {
+        model: TodoList,
+        attributes: ['id'],
+        include: [
+          {
+            model: User,
+            attributes: ['email'],
+          },
+        ],
+      },
+    });
   }
 }
