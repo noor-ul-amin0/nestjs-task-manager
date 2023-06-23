@@ -11,7 +11,7 @@ import { JwtPayload } from './jwt-payload.interface';
 import { User } from './users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import * as jwt from 'jsonwebtoken';
-import * as nodemailer from 'nodemailer';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +19,7 @@ export class AuthService {
     @InjectModel(User)
     private userModel: typeof User,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   // private methods
@@ -27,18 +28,6 @@ export class AuthService {
     return jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRATION,
     });
-  }
-
-  private async sendAuthVerificationEmail(mailOptions: object): Promise<void> {
-    const transport = nodemailer.createTransport({
-      host: process.env.MAILTRAP_HOST,
-      port: parseInt(process.env.MAILTRAP_PORT),
-      auth: {
-        user: process.env.MAILTRAP_AUTH_USER,
-        pass: process.env.MAILTRAP_AUTH_PASS,
-      },
-    });
-    await transport.sendMail(mailOptions);
   }
 
   //------------------------------------------------------------------------//
@@ -83,7 +72,7 @@ export class AuthService {
        </center
     `,
     };
-    await this.sendAuthVerificationEmail(mailOptions);
+    await this.mailService.sendEmail(mailOptions);
     return 'A verification email has been sent to your email address. Please verify it.';
   }
 
@@ -132,7 +121,7 @@ export class AuthService {
        </center>
       `,
       };
-      await this.sendAuthVerificationEmail(mailOptions);
+      await this.mailService.sendEmail(mailOptions);
 
       await user.update({ passwordResetToken });
       return 'A password reset link has been sent to your email address. Please check your inbox and follow the instructions to reset your password.';
