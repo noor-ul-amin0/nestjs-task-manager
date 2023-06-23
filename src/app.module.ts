@@ -8,11 +8,15 @@ import { TasksModule } from './tasks/tasks.module';
 import { TodoList } from './todolist/todolist.model';
 import { Task } from './tasks/tasks.model';
 import { ReportsModule } from './reports/reports.module';
+import { MailService } from './mail/mail.service';
+import { MailModule } from './mail/mail.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.DB_HOST,
@@ -25,8 +29,9 @@ import { ReportsModule } from './reports/reports.module';
     TodolistModule,
     TasksModule,
     ReportsModule,
+    MailModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [MailService],
 })
 export class AppModule {}
