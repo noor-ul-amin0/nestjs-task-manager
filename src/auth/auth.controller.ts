@@ -6,17 +6,56 @@ import {
   ForgotPasswordDto,
   ResetPasswordDto,
 } from './dto/auth-credentials.dto';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiParam,
+  ApiProperty,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+
+class AccessToken {
+  @ApiProperty({ description: 'JWT token for authentication' })
+  accessToken: string;
+}
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/signup')
+  @ApiOperation({ summary: 'Sign up a new user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiCreatedResponse({
+    description:
+      'A verification email has been sent to your email address. Please verify it.',
+  })
+  @ApiConflictResponse({ description: 'Email already exists' })
+  @ApiUnauthorizedResponse({
+    description: 'An account already exists with this email. Please verify it.',
+  })
   signUp(@Body() authCredentialsDto: CreateUserDto): Promise<string> {
     return this.authService.signUp(authCredentialsDto);
   }
 
   @Post('/signin')
+  @ApiOperation({ summary: 'Log in' })
+  @ApiBody({ type: AuthCredentialsDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The user has been successfully logged in.',
+    type: AccessToken,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Please verify your email',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid email or password',
+  })
   signIn(
     @Body() authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
@@ -24,11 +63,23 @@ export class AuthController {
   }
 
   @Get('/verify/email/:token')
+  @ApiOperation({ summary: 'Verify email' })
+  @ApiParam({ name: 'token', required: true })
+  @ApiResponse({ status: 200, description: 'Email has been verified.' })
   async verifyEmail(@Param('token') token: string): Promise<string> {
     return this.authService.verifyEmail(token);
   }
 
   @Post('/forgot-password')
+  @ApiOperation({ summary: 'Forgot password' })
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset email has been sent.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid email address or account not verified',
+  })
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
   ): Promise<string> {
@@ -36,6 +87,15 @@ export class AuthController {
   }
 
   @Post('/reset-password/:token')
+  @ApiOperation({ summary: 'Reset password' })
+  @ApiParam({ name: 'token', required: true })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Password has been successfully reset.',
+  })
+  @ApiBadRequestResponse({ description: 'Email already verified' })
+  @ApiBadRequestResponse({ description: 'Invalid verification token' })
   async resetPassword(
     @Param('token') token: string,
     @Body() resetPasswordDto: ResetPasswordDto,
