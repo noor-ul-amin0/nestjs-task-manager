@@ -11,7 +11,7 @@ import { ReportsModule } from './reports/reports.module';
 import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { LoggerMiddleware } from './middleware/logger.middleware';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
 
 @Module({
   imports: [
