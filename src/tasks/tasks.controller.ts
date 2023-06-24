@@ -10,6 +10,7 @@ import {
   Put,
   UseInterceptors,
   UploadedFiles,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
@@ -91,7 +92,7 @@ export class TasksController {
   @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
   @ApiNotFoundResponse()
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
     @GetUser() user: User,
     @UploadedFiles() files?: Array<Express.Multer.File>,
@@ -100,7 +101,7 @@ export class TasksController {
       const filePaths = files.map((file) => file.path);
       updateTaskDto.fileAttachments = filePaths;
     }
-    return this.tasksService.update(+id, updateTaskDto, user);
+    return this.tasksService.update(id, updateTaskDto, user);
   }
 
   @Delete(':id')
@@ -108,8 +109,11 @@ export class TasksController {
   @ApiResponse({ status: 204, description: 'Task deleted successfully' })
   @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
   @ApiNotFoundResponse()
-  remove(@Param('id') id: string, @GetUser() user: User): Promise<void> {
-    return this.tasksService.remove(+id, user);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.tasksService.remove(id, user);
   }
 
   @Put(':id/mark-completed')
@@ -121,7 +125,7 @@ export class TasksController {
   })
   @ApiNotFoundResponse()
   @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
-  complete(@Param('id') id: string, @GetUser() user: User) {
-    return this.tasksService.complete(+id, user);
+  complete(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+    return this.tasksService.complete(id, user);
   }
 }
