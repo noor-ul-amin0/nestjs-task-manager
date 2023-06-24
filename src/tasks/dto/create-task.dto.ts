@@ -1,9 +1,16 @@
-import { IsDateString, IsBoolean, IsString, IsOptional } from 'class-validator';
+import {
+  IsDateString,
+  IsBoolean,
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateTaskDto {
-  @IsString()
   @ApiProperty({ description: 'Title of the task' })
+  @IsNotEmpty()
+  @IsString()
   title: string;
 
   @IsString()
