@@ -8,6 +8,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './users.model';
 import { MailService } from 'src/mail/mail.service';
 import { MailModule } from 'src/mail/mail.module';
+import { GithubStrategy } from './github.strategy';
 
 @Module({
   imports: [
@@ -17,14 +18,14 @@ import { MailModule } from 'src/mail/mail.module';
       useFactory: async () => ({
         secret: process.env.JWT_SECRET,
         signOptions: {
-          expiresIn: 60 * 60 * 5,
+          expiresIn: process.env.JWT_EXPIRATION,
         },
       }),
     }),
     MailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, MailService],
+  providers: [AuthService, JwtStrategy, MailService, GithubStrategy],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
