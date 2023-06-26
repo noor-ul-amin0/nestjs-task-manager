@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
 import { User } from 'src/auth/users.model';
 import { InjectModel } from '@nestjs/sequelize';
@@ -18,6 +22,13 @@ export class TasksService {
 
   async create(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
     const todolist = await this.todolistsService.getTodoListForUser(user.id);
+    const tasksCount = await this.taskModel.count({
+      where: { todoListId: todolist.id },
+    });
+    if (tasksCount > 50)
+      throw new ForbiddenException(
+        'Maximum task limit reached. You are only allowed to create a maximum of 50 tasks.',
+      );
     return this.taskModel.create({
       ...createTaskDto,
       userId: user.id,
