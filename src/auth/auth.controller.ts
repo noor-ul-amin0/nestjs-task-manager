@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   AuthCredentialsDto,
@@ -17,6 +26,7 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 class AccessToken {
   @ApiProperty({ description: 'JWT token for authentication' })
@@ -101,5 +111,19 @@ export class AuthController {
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<string> {
     return this.authService.resetPassword(token, resetPasswordDto.password);
+  }
+
+  @Get('github')
+  @UseGuards(AuthGuard('github'))
+  async githubLogin() {
+    return HttpStatus.OK;
+  }
+
+  @Get('/github/callback')
+  @UseGuards(AuthGuard('github'))
+  githubLoginCallback(@Req() req) {
+    return {
+      accessToken: req.user.accessToken,
+    };
   }
 }
