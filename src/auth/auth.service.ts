@@ -80,7 +80,9 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
     const { email, password } = authCredentialsDto;
-    const user = await this.userModel.findOne({ where: { email } });
+    const user = await this.userModel.findOne({
+      where: { email, githubId: null },
+    });
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JwtPayload = { id: user.id, email };
       const accessToken: string = this.jwtService.sign(payload);
@@ -92,6 +94,27 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
   }
+  async findOrCreateUser(
+    name: string,
+    email: string,
+    githubId: string,
+  ): Promise<User> {
+    let user = await this.userModel.findOne({
+      where: { email },
+    });
+    if (user && !user.githubId)
+      throw new BadRequestException('User already exists');
+    if (!user) {
+      user = await this.userModel.create({
+        name,
+        email,
+        githubId,
+        isVerified: true,
+      });
+    }
+
+    return user;
+  }
   async findOne(email: string): Promise<User | undefined> {
     return this.userModel.findOne({ where: { email } });
   }
@@ -99,7 +122,7 @@ export class AuthService {
   async forgotPassword(email: string): Promise<string> {
     const user = await this.userModel.findOne({ where: { email } });
 
-    if (user && user.isVerified) {
+    if (user && user.isVerified && !user.githubId) {
       const passwordResetToken = this.generateVerificationToken({
         id: user.id,
         email: user.email,
@@ -141,14 +164,10 @@ export class AuthService {
       const { id, email } = decodedToken;
 
       const user = await this.userModel.findOne({
-        where: { id, email },
+        where: { id, email, githubId: null, isVerified: true },
       });
-
-      if (
-        !user ||
-        !user.passwordResetToken ||
-        user.passwordResetToken !== token
-      ) {
+      if (!user) throw new BadRequestException('Something went wrong');
+      if (!user.passwordResetToken || user.passwordResetToken !== token) {
         throw new UnauthorizedException('Invalid reset password token');
       }
 
@@ -172,10 +191,15 @@ export class AuthService {
       ) as JwtPayload;
 
       const user = await this.userModel.findOne({
-        where: { id: decodedToken.id, email: decodedToken.email },
+        where: {
+          id: decodedToken.id,
+          email: decodedToken.email,
+          githubId: null,
+          isVerified: false,
+        },
       });
 
-      if (user && user.isVerified) {
+      if (!user) {
         throw new BadRequestException('Email already verified');
       }
 
