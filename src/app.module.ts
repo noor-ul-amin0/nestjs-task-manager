@@ -7,13 +7,21 @@ import { ReportsModule } from './reports/reports.module';
 import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
-import { DatabaseModule } from './database/database.module';
+import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    DatabaseModule,
+    SequelizeModule.forRoot({
+      dialect: 'postgres',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      autoLoadModels: true,
+    }),
     TodolistModule,
     TasksModule,
     ReportsModule,
