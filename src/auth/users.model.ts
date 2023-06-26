@@ -30,17 +30,11 @@ export class User extends Model<User> {
   })
   email: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
+  @Column(DataType.STRING)
   password: string;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  facebookId: string;
+  @Column(DataType.STRING)
+  githubId: string;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
   isVerified: boolean;

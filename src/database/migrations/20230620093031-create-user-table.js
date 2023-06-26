@@ -22,7 +22,7 @@ module.exports = {
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       isVerified: {
         type: Sequelize.BOOLEAN,
@@ -30,10 +30,7 @@ module.exports = {
         defaultValue: false,
       },
       passwordResetToken: Sequelize.STRING,
-      facebookId: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
+      githubId: Sequelize.STRING,
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
