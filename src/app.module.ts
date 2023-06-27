@@ -8,13 +8,14 @@ import { MailService } from './mail/mail.service';
 import { MailModule } from './mail/mail.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { Dialect } from 'sequelize';
 
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRoot({
-      dialect: 'postgres',
+      dialect: process.env.DB_DIALECT as Dialect,
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT),
       username: process.env.DB_USER,
