@@ -8,7 +8,7 @@ import {
   BeforeUpdate,
   BeforeCreate,
 } from 'sequelize-typescript';
-import { TodoList } from 'src/todolist/todolist.model';
+import { TodoList } from '../todolist/todolist.model';
 
 @Table({ tableName: 'tasks' })
 export class Task extends Model {

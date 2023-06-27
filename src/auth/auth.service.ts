@@ -11,7 +11,7 @@ import { JwtPayload } from './jwt-payload.interface';
 import { User } from './users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import * as jwt from 'jsonwebtoken';
-import { MailService } from 'src/mail/mail.service';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {

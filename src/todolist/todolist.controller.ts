@@ -2,8 +2,8 @@ import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { TodolistService } from './todolist.service';
 import { CreateTodolistDto } from './dto/create-todolist.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { User } from 'src/auth/users.model';
+import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../auth/users.model';
 import { TodoList } from './todolist.model';
 import {
   ApiTags,

@@ -7,7 +7,7 @@ import {
   BeforeCreate,
   HasOne,
 } from 'sequelize-typescript';
-import { TodoList } from 'src/todolist/todolist.model';
+import { TodoList } from '../todolist/todolist.model';
 
 @Table({ tableName: 'users' })
 export class User extends Model<User> {

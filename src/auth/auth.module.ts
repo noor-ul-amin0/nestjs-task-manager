@@ -6,8 +6,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './users.model';
-import { MailService } from 'src/mail/mail.service';
-import { MailModule } from 'src/mail/mail.module';
+import { MailService } from '../mail/mail.service';
+import { MailModule } from '../mail/mail.module';
 import { GithubStrategy } from './github.strategy';
 
 @Module({

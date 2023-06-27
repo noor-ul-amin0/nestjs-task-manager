@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { Op, Sequelize } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from 'src/auth/users.model';
-import { Task } from 'src/tasks/tasks.model';
+import { User } from '../auth/users.model';
+import { Task } from '../tasks/tasks.model';
 import { ITasksCount } from './reports.interfaces';
-import { TodolistService } from 'src/todolist/todolist.service';
+import { TodolistService } from '../todolist/todolist.service';
 
 @Injectable()
 export class ReportsService {

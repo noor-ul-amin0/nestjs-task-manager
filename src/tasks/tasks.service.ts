@@ -4,13 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
-import { User } from 'src/auth/users.model';
+import { User } from '../auth/users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Task } from './tasks.model';
-import { TodolistService } from 'src/todolist/todolist.service';
+import { TodolistService } from '../todolist/todolist.service';
 import * as moment from 'moment';
 import { Op } from 'sequelize';
-import { TodoList } from 'src/todolist/todolist.model';
+import { TodoList } from '../todolist/todolist.model';
 
 @Injectable()
 export class TasksService {

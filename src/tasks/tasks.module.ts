@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
 import { Task } from './tasks.model';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { TodolistModule } from 'src/todolist/todolist.module';
-import { MailService } from 'src/mail/mail.service';
+import { TodolistModule } from '../todolist/todolist.module';
+import { MailService } from '../mail/mail.service';
 import { TasksScheduler } from './tasks.scheduler';
 
 @Module({
