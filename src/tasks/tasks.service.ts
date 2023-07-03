@@ -87,13 +87,13 @@ export class TasksService {
 
     // Iterate through each task
     for (let i = 0; i < tasks.length; i++) {
+      const taskWords = tasks[i].title.toLowerCase().split(' ');
       let isSimilar = false;
 
       // Compare task words with other tasks
       for (let j = 0; j < tasks.length; j++) {
         if (i !== j) {
           // Exclude the same task
-          const taskWords = tasks[i].title.toLowerCase().split(' ');
           const otherTaskWords = tasks[j].title.toLowerCase().split(' ');
 
           // Check if all words in task A exist in task B or vice versa
