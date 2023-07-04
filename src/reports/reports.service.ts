@@ -73,10 +73,11 @@ export class ReportsService {
     // find the date with maximum tasks
     let maxDate = null;
     let maxCount = 0;
-    for (const [date, count] of Object.entries(tasksByDate)) {
-      if ((count as number) > maxCount) {
-        maxCount = count as number;
-        maxDate = date;
+
+    for (const key in tasksByDate) {
+      if ((tasksByDate[key] as number) > maxCount) {
+        maxCount = tasksByDate[key] as number;
+        maxDate = key;
       }
     }
 
