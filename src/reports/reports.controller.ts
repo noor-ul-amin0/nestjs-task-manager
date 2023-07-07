@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/users.model';
@@ -12,6 +12,7 @@ import {
   ApiForbiddenResponse,
   ApiProperty,
 } from '@nestjs/swagger';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 class TasksCount {
   @ApiProperty({ description: 'Total tasks' })
@@ -25,6 +26,7 @@ class TasksCount {
 @ApiTags('Reports')
 @ApiBearerAuth()
 @Controller('reports')
+@UseInterceptors(CacheInterceptor)
 @UseGuards(AuthGuard())
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
