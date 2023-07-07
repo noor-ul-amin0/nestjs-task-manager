@@ -10,6 +10,7 @@ import { extname } from 'path';
 import { TodolistModule } from '../todolist/todolist.module';
 import { MailService } from '../mail/mail.service';
 import { TasksScheduler } from './tasks.scheduler';
+import { CacheService } from 'src/cache/cache.service';
 
 @Module({
   imports: [
@@ -28,6 +29,6 @@ import { TasksScheduler } from './tasks.scheduler';
     TodolistModule,
   ],
   controllers: [TasksController],
-  providers: [TasksService, MailService, TasksScheduler],
+  providers: [TasksService, MailService, TasksScheduler, CacheService],
 })
 export class TasksModule {}
