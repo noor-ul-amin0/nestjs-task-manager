@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { GetUser } from '../auth/get-user.decorator';
-import { User } from '../auth/users.model';
+import { User } from '../users/users.model';
 import { ITasksCount } from './reports.interfaces';
 import { AuthGuard } from '@nestjs/passport';
 import {

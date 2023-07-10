@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TasksController } from './tasks.controller';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
-import { User } from 'src/auth/users.model';
+import { User } from 'src/users/users.model';
 import { Task } from './tasks.model';
 import { BadRequestException } from '@nestjs/common';
 

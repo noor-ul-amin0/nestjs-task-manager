@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateTodolistDto } from './dto/create-todolist.dto';
 import { TodoList } from './todolist.model';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from 'src/auth/users.model';
+import { User } from 'src/users/users.model';
 
 @Injectable()
 export class TodolistService {

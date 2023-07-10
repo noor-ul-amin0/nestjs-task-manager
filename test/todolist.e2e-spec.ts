@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { User } from '../src/auth/users.model';
+import { User } from '../src/users/users.model';
 import { AuthModule } from '../src/auth/auth.module';
 import { TodolistModule } from '../src/todolist/todolist.module';
 import { TodoList } from '../src/todolist/todolist.model';

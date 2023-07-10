@@ -9,6 +9,7 @@ import { MailModule } from './mail/mail.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Dialect } from 'sequelize';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { Dialect } from 'sequelize';
     TasksModule,
     ReportsModule,
     MailModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [MailService],

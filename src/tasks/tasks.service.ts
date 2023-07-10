@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
-import { User } from '../auth/users.model';
+import { User } from '../users/users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Task } from './tasks.model';
 import { TodolistService } from '../todolist/todolist.service';

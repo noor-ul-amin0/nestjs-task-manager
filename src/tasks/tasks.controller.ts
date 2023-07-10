@@ -16,7 +16,7 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
-import { User } from '../auth/users.model';
+import { User } from '../users/users.model';
 import { Task } from './tasks.model';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
