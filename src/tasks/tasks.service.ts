@@ -11,6 +11,7 @@ import { TodolistService } from "../todolist/todolist.service";
 import * as moment from "moment";
 import { Op } from "sequelize";
 import { TodoList } from "../todolist/todolist.model";
+import { CacheService } from "src/cache/cache.service";
 
 @Injectable()
 export class TasksService {
@@ -18,6 +19,7 @@ export class TasksService {
     @InjectModel(Task)
     private taskModel: typeof Task,
     private todolistsService: TodolistService,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
@@ -29,17 +31,35 @@ export class TasksService {
       throw new ForbiddenException(
         "Maximum task limit reached. You are only allowed to create a maximum of 50 tasks.",
       );
-    return this.taskModel.create({
+    const task = await this.taskModel.create({
       ...createTaskDto,
       userId: user.id,
       todoListId: todolist.id,
     });
+    await this.resetTasksCache(user);
+    return task;
   }
 
   async findAll(user: User): Promise<Task[]> {
     const todolist = await this.todolistsService.getTodoListForUser(user.id);
     if (!todolist) return [];
-    return this.taskModel.findAll({ where: { todoListId: todolist.id } });
+
+    const cachedTasks = await this.cacheService.get(`tasks:${user.id}`);
+    if (cachedTasks) {
+      return JSON.parse(cachedTasks as string);
+    } else {
+      const fetchedTasks = await this.taskModel.findAll({
+        where: { todoListId: todolist.id },
+        raw: true,
+        order: [["updatedAt", "DESC"]],
+      });
+      await this.cacheService.set(
+        `tasks:${user.id}`,
+        JSON.stringify(fetchedTasks),
+        0,
+      );
+      return fetchedTasks;
+    }
   }
 
   async update(
@@ -48,11 +68,13 @@ export class TasksService {
     user: User,
   ): Promise<Task> {
     const todolist = await this.todolistsService.getTodoListForUser(user.id);
-    const task = await this.taskModel.findOne({
+    let task = await this.taskModel.findOne({
       where: { id, todoListId: todolist.id },
     });
     if (!task) throw new NotFoundException();
-    return task.update({ ...updateTaskDto });
+    task = await task.update({ ...updateTaskDto });
+    await this.resetTasksCache(user);
+    return task;
   }
 
   async remove(id: number, user: User): Promise<void> {
@@ -61,24 +83,33 @@ export class TasksService {
       where: { id, todoListId: todolist.id },
     });
     if (!task) throw new NotFoundException();
-    return task.destroy();
+    await task.destroy();
+    return this.resetTasksCache(user);
   }
 
   async complete(id: number, user: User): Promise<Task> {
     const todolist = await this.todolistsService.getTodoListForUser(user.id);
-    const task = await this.taskModel.findOne({
+    let task = await this.taskModel.findOne({
       where: { id, todoListId: todolist.id },
     });
     if (!task) throw new NotFoundException();
     if (task.completionStatus === true) return task;
-    return task.update({
+    task = await task.update({
       completionStatus: true,
       completionDateTime: new Date(),
     });
+    await this.resetTasksCache(user);
+    return task;
   }
 
   async similar(user: User): Promise<Task[]> {
     const todolist = await this.todolistsService.getTodoListForUser(user.id);
+
+    const cachedTasks = await this.cacheService.get(`similar:tasks:${user.id}`);
+    if (cachedTasks) {
+      return JSON.parse(cachedTasks as string);
+    }
+
     /*Return user a list of similar tasks. Two tasks A and B are considered similar if all the words in the task A exist in task B or vice versa.*/
     const tasks = await this.taskModel.findAll({
       where: { todoListId: todolist.id },
@@ -107,7 +138,11 @@ export class TasksService {
 
       if (isSimilar) similarTasks.push(tasks[i]); // Add the similar task to the list
     }
-
+    await this.cacheService.set(
+      `similar:tasks:${user.id}`,
+      JSON.stringify(similarTasks),
+      0,
+    );
     return similarTasks;
   }
 
@@ -132,5 +167,11 @@ export class TasksService {
         ],
       },
     });
+  }
+
+  private resetTasksCache(user: User): Promise<void> {
+    this.cacheService.delete(`tasks:${user.id}`);
+    this.cacheService.delete(`similar:tasks:${user.id}`);
+    return Promise.resolve();
   }
 }

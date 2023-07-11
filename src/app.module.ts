@@ -5,15 +5,17 @@ import { TodolistModule } from "./todolist/todolist.module";
 import { TasksModule } from "./tasks/tasks.module";
 import { ReportsModule } from "./reports/reports.module";
 import { MailService } from "./mail/mail.service";
-import { MailModule } from "./mail/mail.module";
 import { LoggerMiddleware } from "./middlewares/logger.middleware";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { Dialect } from "sequelize";
-
+import { CacheModule } from "@nestjs/cache-manager";
 @Module({
   imports: [
     AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.register({
+      isGlobal: true,
+    }),
     SequelizeModule.forRoot({
       dialect: process.env.DB_DIALECT as Dialect,
       host: process.env.DB_HOST,
@@ -26,7 +28,6 @@ import { Dialect } from "sequelize";
     TodolistModule,
     TasksModule,
     ReportsModule,
-    MailModule,
   ],
   controllers: [],
   providers: [MailService],
