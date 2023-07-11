@@ -99,9 +99,6 @@ export class TasksService {
     });
     if (!task) throw new NotFoundException();
     if (task.completionStatus === true) return task;
-    if (task.dueDateTime < new Date()) {
-      throw new BadRequestException("Task is overdue");
-    }
     task = await task.update({
       completionStatus: true,
       completionDateTime: new Date(),
