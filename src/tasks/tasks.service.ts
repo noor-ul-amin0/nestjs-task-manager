@@ -1,9 +1,14 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { CreateTaskDto, UpdateTaskDto } from "./dto/create-task.dto";
+import {
+  CreateTaskDto,
+  UpdateTaskDto,
+  UpdateTaskDueDateDto,
+} from "./dto/create-task.dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { Task } from "./tasks.model";
 import { TodolistService } from "../todolist/todolist.service";
@@ -94,12 +99,53 @@ export class TasksService {
     });
     if (!task) throw new NotFoundException();
     if (task.completionStatus === true) return task;
+    if (task.dueDateTime < new Date()) {
+      throw new BadRequestException("Task is overdue");
+    }
     task = await task.update({
       completionStatus: true,
       completionDateTime: new Date(),
     });
     await this.resetTasksCache(user);
     return task;
+  }
+
+  async updateTaskDueDate(
+    id: number,
+    updateTaskDueDateDto: UpdateTaskDueDateDto,
+    user: User,
+  ): Promise<Task> {
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
+    const task = await this.taskModel.findOne({
+      where: { id, todoListId: todolist.id },
+    });
+    if (!task) {
+      throw new NotFoundException("Task not found");
+    }
+    if (task.completionStatus === true) {
+      throw new BadRequestException("Task is completed");
+    }
+    const dueDateTime = new Date(updateTaskDueDateDto.dueDateTime);
+
+    if (dueDateTime <= new Date()) {
+      throw new BadRequestException("Due date must be in the future");
+    }
+    return task.update({ dueDateTime });
+  }
+
+  async getUpcomingTasks(user: User): Promise<Task[]> {
+    const todolist = await this.todolistsService.getTodoListForUser(user.id);
+    const today = new Date();
+    const upcomingTasks = await this.taskModel.findAll({
+      where: {
+        todoListId: todolist.id,
+        dueDateTime: {
+          [Op.gt]: today,
+        },
+      },
+    });
+
+    return upcomingTasks;
   }
 
   async similar(user: User): Promise<Task[]> {
