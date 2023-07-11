@@ -11,14 +11,14 @@ import {
   UseInterceptors,
   UploadedFiles,
   ParseIntPipe,
-} from '@nestjs/common';
-import { TasksService } from './tasks.service';
-import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
-import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../auth/get-user.decorator';
-import { User } from '../auth/users.model';
-import { Task } from './tasks.model';
-import { FilesInterceptor } from '@nestjs/platform-express';
+} from "@nestjs/common";
+import { TasksService } from "./tasks.service";
+import { CreateTaskDto, UpdateTaskDto } from "./dto/create-task.dto";
+import { AuthGuard } from "@nestjs/passport";
+import { GetUser } from "../auth/get-user.decorator";
+import { User } from "../auth/users.model";
+import { Task } from "./tasks.model";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import {
   ApiBody,
   ApiOperation,
@@ -27,25 +27,25 @@ import {
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
 
-@ApiTags('tasks')
+@ApiTags("tasks")
 @ApiBearerAuth()
-@Controller('tasks')
+@Controller("tasks")
 @UseGuards(AuthGuard())
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
-  @UseInterceptors(FilesInterceptor('fileAttachments', 5))
+  @UseInterceptors(FilesInterceptor("fileAttachments", 5))
   @Post()
-  @ApiOperation({ summary: 'Create a new task' })
-  @ApiBody({ type: CreateTaskDto, description: 'List of files' })
+  @ApiOperation({ summary: "Create a new task" })
+  @ApiBody({ type: CreateTaskDto, description: "List of files" })
   @ApiResponse({
     status: 201,
-    description: 'Task created successfully',
+    description: "Task created successfully",
     type: CreateTaskDto,
   })
-  @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
+  @ApiForbiddenResponse({ description: "Please add a Todo list first" })
   create(
     @Body() createTaskDto: CreateTaskDto,
     @GetUser() user: User,
@@ -59,40 +59,40 @@ export class TasksController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retrieve all tasks of a user' })
+  @ApiOperation({ summary: "Retrieve all tasks of a user" })
   @ApiResponse({
     status: 200,
-    description: 'Returned all tasks of a user',
+    description: "Returned all tasks of a user",
     type: [CreateTaskDto],
   })
-  @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
+  @ApiForbiddenResponse({ description: "Please add a Todo list first" })
   findAll(@GetUser() user: User): Promise<Task[]> {
     return this.tasksService.findAll(user);
   }
 
-  @Get('similar')
-  @ApiOperation({ summary: 'Retrieve similar tasks of a user' })
+  @Get("similar")
+  @ApiOperation({ summary: "Retrieve similar tasks of a user" })
   @ApiResponse({
     status: 200,
-    description: 'Returned similar tasks of a user',
+    description: "Returned similar tasks of a user",
     type: [CreateTaskDto],
   })
-  @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
+  @ApiForbiddenResponse({ description: "Please add a Todo list first" })
   similar(@GetUser() user: User): Promise<Task[]> {
     return this.tasksService.similar(user);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update a task' })
+  @Patch(":id")
+  @ApiOperation({ summary: "Update a task" })
   @ApiResponse({
     status: 200,
-    description: 'Task updated successfully',
+    description: "Task updated successfully",
     type: CreateTaskDto,
   })
-  @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
+  @ApiForbiddenResponse({ description: "Please add a Todo list first" })
   @ApiNotFoundResponse()
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
     @GetUser() user: User,
     @UploadedFiles() files?: Array<Express.Multer.File>,
@@ -104,28 +104,28 @@ export class TasksController {
     return this.tasksService.update(id, updateTaskDto, user);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a task' })
-  @ApiResponse({ status: 204, description: 'Task deleted successfully' })
-  @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete a task" })
+  @ApiResponse({ status: 204, description: "Task deleted successfully" })
+  @ApiForbiddenResponse({ description: "Please add a Todo list first" })
   @ApiNotFoundResponse()
   remove(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
     @GetUser() user: User,
   ): Promise<void> {
     return this.tasksService.remove(id, user);
   }
 
-  @Put(':id/mark-completed')
-  @ApiOperation({ summary: 'Mark a task as completed' })
+  @Put(":id/mark-completed")
+  @ApiOperation({ summary: "Mark a task as completed" })
   @ApiResponse({
     status: 200,
-    description: 'Task marked as completed successfully',
+    description: "Task marked as completed successfully",
     type: CreateTaskDto,
   })
   @ApiNotFoundResponse()
-  @ApiForbiddenResponse({ description: 'Please add a Todo list first' })
-  complete(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
+  @ApiForbiddenResponse({ description: "Please add a Todo list first" })
+  complete(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
     return this.tasksService.complete(id, user);
   }
 }

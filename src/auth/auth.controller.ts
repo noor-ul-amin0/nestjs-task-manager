@@ -7,14 +7,14 @@ import {
   Post,
   Req,
   UseGuards,
-} from '@nestjs/common';
-import { AuthService } from './auth.service';
+} from "@nestjs/common";
+import { AuthService } from "./auth.service";
 import {
   AuthCredentialsDto,
   CreateUserDto,
   ForgotPasswordDto,
   ResetPasswordDto,
-} from './dto/auth-credentials.dto';
+} from "./dto/auth-credentials.dto";
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -25,46 +25,46 @@ import {
   ApiProperty,
   ApiResponse,
   ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+} from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
 
 class AccessToken {
-  @ApiProperty({ description: 'JWT token for authentication' })
+  @ApiProperty({ description: "JWT token for authentication" })
   accessToken: string;
 }
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/signup')
-  @ApiOperation({ summary: 'Sign up a new user' })
+  @Post("/signup")
+  @ApiOperation({ summary: "Sign up a new user" })
   @ApiBody({ type: CreateUserDto })
   @ApiCreatedResponse({
     description:
-      'A verification email has been sent to your email address. Please verify it.',
+      "A verification email has been sent to your email address. Please verify it.",
   })
-  @ApiConflictResponse({ description: 'Email already exists' })
+  @ApiConflictResponse({ description: "Email already exists" })
   @ApiUnauthorizedResponse({
-    description: 'An account already exists with this email. Please verify it.',
+    description: "An account already exists with this email. Please verify it.",
   })
   signUp(@Body() authCredentialsDto: CreateUserDto): Promise<string> {
     return this.authService.signUp(authCredentialsDto);
   }
 
-  @Post('/signin')
-  @ApiOperation({ summary: 'Log in' })
+  @Post("/signin")
+  @ApiOperation({ summary: "Log in" })
   @ApiBody({ type: AuthCredentialsDto })
   @ApiResponse({
     status: 200,
-    description: 'The user has been successfully logged in.',
+    description: "The user has been successfully logged in.",
     type: AccessToken,
   })
   @ApiUnauthorizedResponse({
-    description: 'Please verify your email',
+    description: "Please verify your email",
   })
   @ApiUnauthorizedResponse({
-    description: 'Invalid email or password',
+    description: "Invalid email or password",
   })
   signIn(
     @Body() authCredentialsDto: AuthCredentialsDto,
@@ -72,23 +72,23 @@ export class AuthController {
     return this.authService.signIn(authCredentialsDto);
   }
 
-  @Get('/verify/email/:token')
-  @ApiOperation({ summary: 'Verify email' })
-  @ApiParam({ name: 'token', required: true })
-  @ApiResponse({ status: 200, description: 'Email has been verified.' })
-  async verifyEmail(@Param('token') token: string): Promise<string> {
+  @Get("/verify/email/:token")
+  @ApiOperation({ summary: "Verify email" })
+  @ApiParam({ name: "token", required: true })
+  @ApiResponse({ status: 200, description: "Email has been verified." })
+  async verifyEmail(@Param("token") token: string): Promise<string> {
     return this.authService.verifyEmail(token);
   }
 
-  @Post('/forgot-password')
-  @ApiOperation({ summary: 'Forgot password' })
+  @Post("/forgot-password")
+  @ApiOperation({ summary: "Forgot password" })
   @ApiBody({ type: ForgotPasswordDto })
   @ApiResponse({
     status: 200,
-    description: 'Password reset email has been sent.',
+    description: "Password reset email has been sent.",
   })
   @ApiBadRequestResponse({
-    description: 'Invalid email address or account not verified',
+    description: "Invalid email address or account not verified",
   })
   async forgotPassword(
     @Body() forgotPasswordDto: ForgotPasswordDto,
@@ -96,31 +96,31 @@ export class AuthController {
     return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
-  @Post('/reset-password/:token')
-  @ApiOperation({ summary: 'Reset password' })
-  @ApiParam({ name: 'token', required: true })
+  @Post("/reset-password/:token")
+  @ApiOperation({ summary: "Reset password" })
+  @ApiParam({ name: "token", required: true })
   @ApiBody({ type: ResetPasswordDto })
   @ApiResponse({
     status: 200,
-    description: 'Password has been successfully reset.',
+    description: "Password has been successfully reset.",
   })
-  @ApiBadRequestResponse({ description: 'Email already verified' })
-  @ApiBadRequestResponse({ description: 'Invalid verification token' })
+  @ApiBadRequestResponse({ description: "Email already verified" })
+  @ApiBadRequestResponse({ description: "Invalid verification token" })
   async resetPassword(
-    @Param('token') token: string,
+    @Param("token") token: string,
     @Body() resetPasswordDto: ResetPasswordDto,
   ): Promise<string> {
     return this.authService.resetPassword(token, resetPasswordDto.password);
   }
 
-  @Get('github')
-  @UseGuards(AuthGuard('github'))
+  @Get("github")
+  @UseGuards(AuthGuard("github"))
   async githubLogin() {
     return HttpStatus.OK;
   }
 
-  @Get('/github/callback')
-  @UseGuards(AuthGuard('github'))
+  @Get("/github/callback")
+  @UseGuards(AuthGuard("github"))
   githubLoginCallback(@Req() req) {
     return {
       accessToken: req.user.accessToken,

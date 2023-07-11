@@ -7,11 +7,11 @@ import {
   HasMany,
   BelongsTo,
   BeforeCreate,
-} from 'sequelize-typescript';
-import { User } from '../auth/users.model';
-import { Task } from '../tasks/tasks.model';
+} from "sequelize-typescript";
+import { User } from "../auth/users.model";
+import { Task } from "../tasks/tasks.model";
 
-@Table({ tableName: 'todolists', updatedAt: false })
+@Table({ tableName: "todolists", updatedAt: false })
 export class TodoList extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   title: string;

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import * as moment from 'moment';
-import { Op, Sequelize } from 'sequelize';
-import { InjectModel } from '@nestjs/sequelize';
-import { User } from '../auth/users.model';
-import { Task } from '../tasks/tasks.model';
-import { ITasksCount } from './reports.interfaces';
-import { TodolistService } from '../todolist/todolist.service';
+import { Injectable } from "@nestjs/common";
+import * as moment from "moment";
+import { Op, Sequelize } from "sequelize";
+import { InjectModel } from "@nestjs/sequelize";
+import { User } from "../auth/users.model";
+import { Task } from "../tasks/tasks.model";
+import { ITasksCount } from "./reports.interfaces";
+import { TodolistService } from "../todolist/todolist.service";
 
 @Injectable()
 export class ReportsService {
@@ -34,7 +34,7 @@ export class ReportsService {
 
   async getAvgTasksPerDay(user: User): Promise<number> {
     const todolist = await this.todoListService.getTodoListForUser(user.id);
-    const daysSinceAccountCreation = moment().diff(user.createdAt, 'days');
+    const daysSinceAccountCreation = moment().diff(user.createdAt, "days");
     if (daysSinceAccountCreation === 0) {
       // If no days have passed since the account creation
       return 0;
@@ -51,7 +51,7 @@ export class ReportsService {
       where: {
         todoListId: todolist.id,
         completionStatus: true,
-        completionDateTime: { [Op.gt]: Sequelize.col('dueDateTime') },
+        completionDateTime: { [Op.gt]: Sequelize.col("dueDateTime") },
       },
     });
   }
@@ -60,12 +60,12 @@ export class ReportsService {
     const todolist = await this.todoListService.getTodoListForUser(user.id);
     const tasks = await this.taskModel.findAll({
       where: { todoListId: todolist.id, completionStatus: true },
-      attributes: ['completionDateTime'],
+      attributes: ["completionDateTime"],
     });
 
     // group tasks by completion date
     const tasksByDate = tasks.reduce((grouped, task) => {
-      const date = moment(task.completionDateTime).format('YYYY-MM-DD'); // get only the date part
+      const date = moment(task.completionDateTime).format("YYYY-MM-DD"); // get only the date part
       grouped[date] = (grouped[date] || 0) + 1;
       return grouped;
     }, {});

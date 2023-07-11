@@ -4,12 +4,12 @@ import {
   IsString,
   MaxLength,
   MinLength,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+} from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateUserDto {
   @ApiProperty({
-    description: 'The name of the user',
+    description: "The name of the user",
     minLength: 3,
     maxLength: 20,
   })
@@ -19,12 +19,12 @@ export class CreateUserDto {
   @MaxLength(20)
   name: string;
 
-  @ApiProperty({ description: 'The email of the user' })
+  @ApiProperty({ description: "The email of the user" })
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @ApiProperty({ description: 'The password for the account', minLength: 6 })
+  @ApiProperty({ description: "The password for the account", minLength: 6 })
   @IsNotEmpty()
   @IsString()
   @MinLength(6)
@@ -32,12 +32,12 @@ export class CreateUserDto {
 }
 
 export class AuthCredentialsDto {
-  @ApiProperty({ description: 'The email of the user' })
+  @ApiProperty({ description: "The email of the user" })
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @ApiProperty({ description: 'The password for the account' })
+  @ApiProperty({ description: "The password for the account" })
   @IsNotEmpty()
   @IsString()
   password: string;
@@ -45,7 +45,7 @@ export class AuthCredentialsDto {
 
 export class ForgotPasswordDto {
   @ApiProperty({
-    description: 'The email to send password reset instructions to',
+    description: "The email to send password reset instructions to",
   })
   @IsNotEmpty()
   @IsEmail()
@@ -53,7 +53,7 @@ export class ForgotPasswordDto {
 }
 
 export class ResetPasswordDto {
-  @ApiProperty({ description: 'The new password for the account' })
+  @ApiProperty({ description: "The new password for the account" })
   @IsNotEmpty()
   @IsString()
   password: string;
