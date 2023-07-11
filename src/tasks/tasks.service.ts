@@ -10,7 +10,7 @@ import { TodolistService } from "../todolist/todolist.service";
 import * as moment from "moment";
 import { Op } from "sequelize";
 import { TodoList } from "../todolist/todolist.model";
-import { CacheService } from "src/cache/cache.service";
+import { CacheService } from "src/common/cache/cache.service";
 import { User } from "src/users/users.model";
 
 @Injectable()

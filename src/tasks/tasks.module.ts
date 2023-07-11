@@ -10,7 +10,7 @@ import { extname } from "path";
 import { TodolistModule } from "../todolist/todolist.module";
 import { MailService } from "../mail/mail.service";
 import { TasksScheduler } from "./tasks.scheduler";
-import { CacheService } from "src/cache/cache.service";
+import { CacheService } from "src/common/cache/cache.service";
 
 @Module({
   imports: [
