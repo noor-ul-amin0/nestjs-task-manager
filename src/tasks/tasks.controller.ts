@@ -13,7 +13,11 @@ import {
   ParseIntPipe,
 } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
-import { CreateTaskDto, UpdateTaskDto } from "./dto/create-task.dto";
+import {
+  CreateTaskDto,
+  UpdateTaskDto,
+  UpdateTaskDueDateDto,
+} from "./dto/create-task.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "../auth/get-user.decorator";
 import { Task } from "./tasks.model";
@@ -68,6 +72,18 @@ export class TasksController {
   @ApiForbiddenResponse({ description: "Please add a Todo list first" })
   findAll(@GetUser() user: User): Promise<Task[]> {
     return this.tasksService.findAll(user);
+  }
+
+  @Get("upcoming")
+  @ApiOperation({ summary: "Retrieve tasks with upcoming due dates" })
+  @ApiResponse({
+    status: 200,
+    description: "Returned tasks with upcoming due dates",
+    type: [CreateTaskDto],
+  })
+  @ApiForbiddenResponse({ description: "Please add a Todo list first" })
+  upcomingTasks(@GetUser() user: User): Promise<Task[]> {
+    return this.tasksService.getUpcomingTasks(user);
   }
 
   @Get("similar")
@@ -127,5 +143,19 @@ export class TasksController {
   @ApiForbiddenResponse({ description: "Please add a Todo list first" })
   complete(@Param("id", ParseIntPipe) id: number, @GetUser() user: User) {
     return this.tasksService.complete(id, user);
+  }
+
+  @Patch(":id/due-date")
+  @ApiOperation({ summary: "Update the due date of a task" })
+  @ApiResponse({
+    status: 200,
+    description: "Task due date updated successfully",
+  })
+  async updateTaskDueDate(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() updateTaskDueDateDto: UpdateTaskDueDateDto,
+    @GetUser() user: User,
+  ): Promise<void> {
+    await this.tasksService.updateTaskDueDate(id, updateTaskDueDateDto, user);
   }
 }
