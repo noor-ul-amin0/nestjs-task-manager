@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { TasksService } from './tasks.service';
-import { MailService } from '../mail/mail.service';
+import { Injectable } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
+import { TasksService } from "./tasks.service";
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class TasksScheduler {
@@ -10,7 +10,7 @@ export class TasksScheduler {
     private readonly mailService: MailService,
   ) {}
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { timeZone: 'UTC' })
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { timeZone: "UTC" })
   async handleCron() {
     const tasksDueToday = await this.tasksService.getTasksDueToday();
 

@@ -9,10 +9,10 @@ import {
   DeletedAt,
   CreatedAt,
   UpdatedAt,
-} from 'sequelize-typescript';
-import { TodoList } from '../todolist/todolist.model';
+} from "sequelize-typescript";
+import { TodoList } from "../todolist/todolist.model";
 
-@Table({ tableName: 'users' })
+@Table({ tableName: "users" })
 export class User extends Model<User> {
   @Column({
     type: DataType.STRING,
@@ -28,25 +28,25 @@ export class User extends Model<User> {
       isEmail: true,
     },
     set(value: string) {
-      this.setDataValue('email', value.toLowerCase());
+      this.setDataValue("email", value.toLowerCase());
     },
   })
   email: string;
 
   @Column({
-    type: DataType.ENUM('admin', 'user'),
-    defaultValue: 'user',
+    type: DataType.ENUM("admin", "user"),
+    defaultValue: "user",
     validate: {
       customValidator(value: string) {
-        if (value === 'admin') {
+        if (value === "admin") {
           throw new Error(
-            'Cannot add another admin. There can only be one admin in the system.',
+            "Cannot add another admin. There can only be one admin in the system.",
           );
         }
       },
     },
   })
-  role: 'admin' | 'user';
+  role: "admin" | "user";
 
   @Column(DataType.STRING)
   password: string;

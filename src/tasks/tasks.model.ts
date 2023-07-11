@@ -7,10 +7,10 @@ import {
   BelongsTo,
   BeforeUpdate,
   BeforeCreate,
-} from 'sequelize-typescript';
-import { TodoList } from '../todolist/todolist.model';
+} from "sequelize-typescript";
+import { TodoList } from "../todolist/todolist.model";
 
-@Table({ tableName: 'tasks' })
+@Table({ tableName: "tasks" })
 export class Task extends Model {
   @Column({
     type: DataType.STRING,

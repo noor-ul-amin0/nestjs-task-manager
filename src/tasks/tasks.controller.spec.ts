@@ -1,31 +1,31 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { TasksController } from './tasks.controller';
-import { TasksService } from './tasks.service';
-import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
-import { User } from 'src/users/users.model';
-import { Task } from './tasks.model';
-import { BadRequestException } from '@nestjs/common';
+import { Test, TestingModule } from "@nestjs/testing";
+import { TasksController } from "./tasks.controller";
+import { TasksService } from "./tasks.service";
+import { CreateTaskDto, UpdateTaskDto } from "./dto/create-task.dto";
+import { Task } from "./tasks.model";
+import { BadRequestException } from "@nestjs/common";
+import { User } from "src/users/users.model";
 
-describe('TasksController', () => {
+describe("TasksController", () => {
   let tasksController: TasksController;
   let tasksService: TasksService;
 
   const userMock: User = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    password: 'password123',
-    facebookId: 'facebook123',
+    name: "John Doe",
+    email: "john.doe@example.com",
+    password: "password123",
+    facebookId: "facebook123",
     isVerified: true,
-    passwordResetToken: 'resetToken123',
+    passwordResetToken: "resetToken123",
     createdAt: new Date(),
     updatedAt: new Date(),
     todoList: null,
   } as User;
 
   const taskMock: Task = {
-    title: 'Task 1',
-    description: 'Task 1 description',
-    fileAttachments: '[]',
+    title: "Task 1",
+    description: "Task 1 description",
+    fileAttachments: "[]",
     dueDateTime: new Date(),
     completionStatus: false,
     completionDateTime: null,
@@ -56,11 +56,11 @@ describe('TasksController', () => {
     tasksService = module.get<TasksService>(TasksService);
   });
 
-  describe('create', () => {
-    it('should create a new task', async () => {
+  describe("create", () => {
+    it("should create a new task", async () => {
       const createTaskDto: CreateTaskDto = {
-        title: 'Task 19',
-        description: 'Task 1 description',
+        title: "Task 19",
+        description: "Task 1 description",
         dueDateTime: new Date().toString(),
       };
 
@@ -70,10 +70,10 @@ describe('TasksController', () => {
       expect(tasksService.create).toHaveBeenCalledWith(createTaskDto, userMock);
     });
 
-    it('should not create a task without title', async () => {
+    it("should not create a task without title", async () => {
       const createTaskDto = {
-        title: '',
-        description: 'Task 1 description',
+        title: "",
+        description: "Task 1 description",
       };
 
       await expect(
@@ -82,8 +82,8 @@ describe('TasksController', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should retrieve all tasks of a user', async () => {
+  describe("findAll", () => {
+    it("should retrieve all tasks of a user", async () => {
       const result = await tasksController.findAll(userMock);
 
       expect(result).toEqual([taskMock]);
@@ -91,8 +91,8 @@ describe('TasksController', () => {
     });
   });
 
-  describe('similar', () => {
-    it('should retrieve similar tasks of a user', async () => {
+  describe("similar", () => {
+    it("should retrieve similar tasks of a user", async () => {
       const result = await tasksController.similar(userMock);
 
       expect(result).toEqual([taskMock]);
@@ -100,11 +100,11 @@ describe('TasksController', () => {
     });
   });
 
-  describe('update', () => {
-    it('should update a task', async () => {
+  describe("update", () => {
+    it("should update a task", async () => {
       const updateTaskDto: UpdateTaskDto = {
-        title: 'Updated Task 1',
-        description: 'Updated Task 1 description',
+        title: "Updated Task 1",
+        description: "Updated Task 1 description",
       };
 
       const result = await tasksController.update(1, updateTaskDto, userMock);
@@ -118,16 +118,16 @@ describe('TasksController', () => {
     });
   });
 
-  describe('remove', () => {
-    it('should delete a task', async () => {
+  describe("remove", () => {
+    it("should delete a task", async () => {
       await tasksController.remove(1, userMock);
 
       expect(tasksService.remove).toHaveBeenCalledWith(1, userMock);
     });
   });
 
-  describe('complete', () => {
-    it('should mark a task as complete', async () => {
+  describe("complete", () => {
+    it("should mark a task as complete", async () => {
       const result = await tasksController.complete(1, userMock);
 
       expect(result).toEqual(taskMock);
