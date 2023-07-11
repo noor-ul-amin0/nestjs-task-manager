@@ -3,8 +3,8 @@ import {
   ExecutionContext,
   Logger,
   NestInterceptor,
-} from '@nestjs/common';
-import { Observable, map } from 'rxjs';
+} from "@nestjs/common";
+import { Observable, map } from "rxjs";
 
 export class ReqLoggerInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
