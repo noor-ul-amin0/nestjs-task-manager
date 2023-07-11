@@ -50,3 +50,10 @@ export class UpdateTaskDto {
   @ApiPropertyOptional({ description: "File attachments for the task" })
   fileAttachments?: string[];
 }
+
+export class UpdateTaskDueDateDto {
+  @ApiProperty({ description: "New due date and time for the task" })
+  @IsNotEmpty()
+  @IsDateString()
+  dueDateTime: string;
+}
