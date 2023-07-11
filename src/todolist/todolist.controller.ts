@@ -3,7 +3,6 @@ import { TodolistService } from "./todolist.service";
 import { CreateTodolistDto } from "./dto/create-todolist.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "../auth/get-user.decorator";
-import { User } from "../auth/users.model";
 import { TodoList } from "./todolist.model";
 import {
   ApiTags,
@@ -13,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
 } from "@nestjs/swagger";
+import { User } from "src/users/users.model";
 
 @ApiTags("todolist")
 @Controller("todolist")

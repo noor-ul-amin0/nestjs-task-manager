@@ -9,6 +9,7 @@ import { LoggerMiddleware } from "./middlewares/logger.middleware";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { Dialect } from "sequelize";
 import { CacheModule } from "@nestjs/cache-manager";
+import { UsersModule } from "./users/users.module";
 @Module({
   imports: [
     AuthModule,
@@ -28,6 +29,7 @@ import { CacheModule } from "@nestjs/cache-manager";
     TodolistModule,
     TasksModule,
     ReportsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [MailService],

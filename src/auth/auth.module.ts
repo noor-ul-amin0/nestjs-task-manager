@@ -5,10 +5,10 @@ import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "./jwt.strategy";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { User } from "./users.model";
 import { MailService } from "../mail/mail.service";
 import { MailModule } from "../mail/mail.module";
 import { GithubStrategy } from "./github.strategy";
+import { User } from "src/users/users.model";
 
 @Module({
   imports: [

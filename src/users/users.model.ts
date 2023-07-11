@@ -6,6 +6,9 @@ import {
   BeforeUpdate,
   BeforeCreate,
   HasOne,
+  DeletedAt,
+  CreatedAt,
+  UpdatedAt,
 } from "sequelize-typescript";
 import { TodoList } from "../todolist/todolist.model";
 
@@ -30,6 +33,21 @@ export class User extends Model<User> {
   })
   email: string;
 
+  @Column({
+    type: DataType.ENUM("admin", "user"),
+    defaultValue: "user",
+    validate: {
+      customValidator(value: string) {
+        if (value === "admin") {
+          throw new Error(
+            "Cannot add another admin. There can only be one admin in the system.",
+          );
+        }
+      },
+    },
+  })
+  role: "admin" | "user";
+
   @Column(DataType.STRING)
   password: string;
 
@@ -42,10 +60,13 @@ export class User extends Model<User> {
   @Column(DataType.STRING)
   passwordResetToken: string;
 
-  @Column({ type: DataType.DATE, allowNull: false })
+  @DeletedAt
+  deletedAt: Date;
+
+  @CreatedAt
   createdAt: Date;
 
-  @Column({ type: DataType.DATE, allowNull: false })
+  @UpdatedAt
   updatedAt: Date;
 
   @HasOne(() => TodoList)

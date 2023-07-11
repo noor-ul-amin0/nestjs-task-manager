@@ -16,7 +16,6 @@ import { TasksService } from "./tasks.service";
 import { CreateTaskDto, UpdateTaskDto } from "./dto/create-task.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "../auth/get-user.decorator";
-import { User } from "../auth/users.model";
 import { Task } from "./tasks.model";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import {
@@ -28,6 +27,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
 } from "@nestjs/swagger";
+import { User } from "src/users/users.model";
 
 @ApiTags("tasks")
 @ApiBearerAuth()

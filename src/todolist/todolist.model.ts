@@ -8,8 +8,8 @@ import {
   BelongsTo,
   BeforeCreate,
 } from "sequelize-typescript";
-import { User } from "../auth/users.model";
 import { Task } from "../tasks/tasks.model";
+import { User } from "src/users/users.model";
 
 @Table({ tableName: "todolists", updatedAt: false })
 export class TodoList extends Model {

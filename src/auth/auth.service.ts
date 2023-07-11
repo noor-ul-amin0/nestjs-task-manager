@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -8,10 +9,10 @@ import { AuthCredentialsDto, CreateUserDto } from "./dto/auth-credentials.dto";
 import * as bcrypt from "bcryptjs";
 import { JwtService } from "@nestjs/jwt";
 import { JwtPayload } from "./jwt-payload.interface";
-import { User } from "./users.model";
 import { InjectModel } from "@nestjs/sequelize";
 import * as jwt from "jsonwebtoken";
 import { MailService } from "../mail/mail.service";
+import { User } from "src/users/users.model";
 
 @Injectable()
 export class AuthService {
@@ -58,6 +59,7 @@ export class AuthService {
       this.generateVerificationToken({
         id: newUser.id,
         email: newUser.email,
+        role: newUser.role,
       });
     const mailOptions = {
       from: process.env.MAILTRAP_SENDER_EMAIL,
@@ -82,9 +84,14 @@ export class AuthService {
     const { email, password } = authCredentialsDto;
     const user = await this.userModel.findOne({
       where: { email, githubId: null },
+      paranoid: false,
     });
+    if (user && user.isSoftDeleted())
+      throw new ForbiddenException(
+        "Your account has been suspended, please contact support.",
+      );
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayload = { id: user.id, email };
+      const payload: JwtPayload = { id: user.id, email, role: user.role };
       const accessToken: string = this.jwtService.sign(payload);
       return { accessToken };
     }
@@ -126,6 +133,7 @@ export class AuthService {
       const passwordResetToken = this.generateVerificationToken({
         id: user.id,
         email: user.email,
+        role: user.role,
       });
 
       const resetPasswordLink = // Generate reset password link

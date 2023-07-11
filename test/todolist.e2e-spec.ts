@@ -2,12 +2,12 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { SequelizeModule } from "@nestjs/sequelize";
-import { User } from "../src/auth/users.model";
 import { AuthModule } from "../src/auth/auth.module";
 import { TodolistModule } from "../src/todolist/todolist.module";
 import { TodoList } from "../src/todolist/todolist.model";
 import { Task } from "../src/tasks/tasks.model";
 import { CreateTodolistDto } from "../src/todolist/dto/create-todolist.dto";
+import { User } from "src/users/users.model";
 
 describe("TodolistController (e2e)", () => {
   let app: INestApplication;

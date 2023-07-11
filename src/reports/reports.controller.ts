@@ -1,7 +1,6 @@
 import { Controller, Get, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ReportsService } from "./reports.service";
 import { GetUser } from "../auth/get-user.decorator";
-import { User } from "../auth/users.model";
 import { ITasksCount } from "./reports.interfaces";
 import { AuthGuard } from "@nestjs/passport";
 import {
@@ -13,6 +12,7 @@ import {
   ApiProperty,
 } from "@nestjs/swagger";
 import { CacheInterceptor } from "@nestjs/cache-manager";
+import { User } from "src/users/users.model";
 
 class TasksCount {
   @ApiProperty({ description: "Total tasks" })
