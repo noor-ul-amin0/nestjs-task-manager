@@ -1,8 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CreateTodolistDto } from './dto/create-todolist.dto';
-import { TodoList } from './todolist.model';
-import { InjectModel } from '@nestjs/sequelize';
-import { User } from 'src/auth/users.model';
+import { ForbiddenException, Injectable } from "@nestjs/common";
+import { CreateTodolistDto } from "./dto/create-todolist.dto";
+import { TodoList } from "./todolist.model";
+import { InjectModel } from "@nestjs/sequelize";
+import { User } from "src/auth/users.model";
 
 @Injectable()
 export class TodolistService {
@@ -13,10 +13,10 @@ export class TodolistService {
   async getTodoListForUser(userId: number): Promise<TodoList> {
     const todolist = await this.todolistModel.findOne({
       where: { userId },
-      attributes: ['id'],
+      attributes: ["id"],
     });
     if (!todolist) {
-      throw new ForbiddenException('Please add a Todo list first');
+      throw new ForbiddenException("Please add a Todo list first");
     }
     return todolist;
   }
@@ -26,7 +26,7 @@ export class TodolistService {
   ): Promise<TodoList> {
     const todolist = await this.todolistModel.findOne({
       where: { userId: user.id },
-      attributes: ['id'],
+      attributes: ["id"],
     });
     if (todolist)
       throw new ForbiddenException("You can't add more than one todo list");
@@ -39,7 +39,7 @@ export class TodolistService {
   findOne(user: User) {
     return this.todolistModel.findOne({
       where: { userId: user.id },
-      include: 'tasks',
+      include: "tasks",
     });
   }
 }

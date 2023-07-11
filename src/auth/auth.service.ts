@@ -3,15 +3,15 @@ import {
   ConflictException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { AuthCredentialsDto, CreateUserDto } from './dto/auth-credentials.dto';
-import * as bcrypt from 'bcryptjs';
-import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './jwt-payload.interface';
-import { User } from './users.model';
-import { InjectModel } from '@nestjs/sequelize';
-import * as jwt from 'jsonwebtoken';
-import { MailService } from '../mail/mail.service';
+} from "@nestjs/common";
+import { AuthCredentialsDto, CreateUserDto } from "./dto/auth-credentials.dto";
+import * as bcrypt from "bcryptjs";
+import { JwtService } from "@nestjs/jwt";
+import { JwtPayload } from "./jwt-payload.interface";
+import { User } from "./users.model";
+import { InjectModel } from "@nestjs/sequelize";
+import * as jwt from "jsonwebtoken";
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class AuthService {
@@ -38,11 +38,11 @@ export class AuthService {
       where: { email: email.toLowerCase() },
     });
     if (user && user.isVerified) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException("Email already exists");
     }
     if (user && !user.isVerified) {
       throw new UnauthorizedException(
-        'An account already exists with this email. Please verify it.',
+        "An account already exists with this email. Please verify it.",
       );
     }
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -54,7 +54,7 @@ export class AuthService {
     // Send verification email with JWT token
     const verificationLink =
       process.env.APP_BASE_URL +
-      '/auth/verify/email/' +
+      "/auth/verify/email/" +
       this.generateVerificationToken({
         id: newUser.id,
         email: newUser.email,
@@ -62,8 +62,8 @@ export class AuthService {
     const mailOptions = {
       from: process.env.MAILTRAP_SENDER_EMAIL,
       to: email,
-      subject: 'Your Email Verification Link (valid for 2 hours)',
-      message: 'Write PUT request to this URL to verify your email',
+      subject: "Your Email Verification Link (valid for 2 hours)",
+      message: "Write PUT request to this URL to verify your email",
       html: `
        <center>
        <h3>Email verification link is as follows:</h3> <br>
@@ -73,7 +73,7 @@ export class AuthService {
     `,
     };
     await this.mailService.sendEmail(mailOptions);
-    return 'A verification email has been sent to your email address. Please verify it.';
+    return "A verification email has been sent to your email address. Please verify it.";
   }
 
   async signIn(
@@ -89,9 +89,9 @@ export class AuthService {
       return { accessToken };
     }
     if (user && !user.isVerified) {
-      throw new UnauthorizedException('Please verify your email');
+      throw new UnauthorizedException("Please verify your email");
     } else {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException("Invalid email or password");
     }
   }
   async findOrCreateUser(
@@ -103,7 +103,7 @@ export class AuthService {
       where: { email },
     });
     if (user && !user.githubId)
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException("User already exists");
     if (!user) {
       user = await this.userModel.create({
         name,
@@ -129,13 +129,13 @@ export class AuthService {
       });
 
       const resetPasswordLink = // Generate reset password link
-        process.env.APP_BASE_URL + '/auth/reset-password/' + passwordResetToken;
+        process.env.APP_BASE_URL + "/auth/reset-password/" + passwordResetToken;
 
       const mailOptions = {
         from: process.env.MAILTRAP_SENDER_EMAIL,
         to: email,
-        subject: 'Your password reset token  (valid for 2 hours)',
-        message: 'Write PUT request to this URL to reset your password',
+        subject: "Your password reset token  (valid for 2 hours)",
+        message: "Write PUT request to this URL to reset your password",
         html: `
        <center>
        <h2>Password reset link is as follows:</h2> <br>
@@ -147,10 +147,10 @@ export class AuthService {
       await this.mailService.sendEmail(mailOptions);
 
       await user.update({ passwordResetToken });
-      return 'A password reset link has been sent to your email address. Please check your inbox and follow the instructions to reset your password.';
+      return "A password reset link has been sent to your email address. Please check your inbox and follow the instructions to reset your password.";
     } else
       throw new BadRequestException(
-        'Invalid email address or account not verified',
+        "Invalid email address or account not verified",
       );
   }
 
@@ -166,9 +166,9 @@ export class AuthService {
       const user = await this.userModel.findOne({
         where: { id, email, githubId: null, isVerified: true },
       });
-      if (!user) throw new BadRequestException('Something went wrong');
+      if (!user) throw new BadRequestException("Something went wrong");
       if (!user.passwordResetToken || user.passwordResetToken !== token) {
-        throw new UnauthorizedException('Invalid reset password token');
+        throw new UnauthorizedException("Invalid reset password token");
       }
 
       // Update user's password
@@ -177,9 +177,9 @@ export class AuthService {
       user.passwordResetToken = null;
       await user.save();
 
-      return 'Your password has been reset successfully';
+      return "Your password has been reset successfully";
     } catch (error) {
-      throw new UnauthorizedException('Invalid reset password token');
+      throw new UnauthorizedException("Invalid reset password token");
     }
   }
 
@@ -200,16 +200,16 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new BadRequestException('Email already verified');
+        throw new BadRequestException("Email already verified");
       }
 
       if (user) {
         user.isVerified = true; // Mark the user as verified
         await user.save();
       }
-      return 'Your email has been verified';
+      return "Your email has been verified";
     } catch (error) {
-      throw new BadRequestException('Invalid verification token');
+      throw new BadRequestException("Invalid verification token");
     }
   }
 }

@@ -1,15 +1,14 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { TodolistModule } from './todolist/todolist.module';
-import { TasksModule } from './tasks/tasks.module';
-import { ReportsModule } from './reports/reports.module';
-import { MailService } from './mail/mail.service';
-import { LoggerMiddleware } from './middlewares/logger.middleware';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { Dialect } from 'sequelize';
-import { CacheModule } from '@nestjs/cache-manager';
-
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { AuthModule } from "./auth/auth.module";
+import { TodolistModule } from "./todolist/todolist.module";
+import { TasksModule } from "./tasks/tasks.module";
+import { ReportsModule } from "./reports/reports.module";
+import { MailService } from "./mail/mail.service";
+import { LoggerMiddleware } from "./middlewares/logger.middleware";
+import { SequelizeModule } from "@nestjs/sequelize";
+import { Dialect } from "sequelize";
+import { CacheModule } from "@nestjs/cache-manager";
 @Module({
   imports: [
     AuthModule,
@@ -35,6 +34,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes("*");
   }
 }

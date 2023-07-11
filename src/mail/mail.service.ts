@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
-import { Task } from 'src/tasks/tasks.model';
+import { Injectable } from "@nestjs/common";
+import * as nodemailer from "nodemailer";
+import { Task } from "src/tasks/tasks.model";
 
 @Injectable()
 export class MailService {
@@ -21,24 +21,24 @@ export class MailService {
     const mailOptions = {
       from: process.env.EMAIL_USERNAME, // sender address
       to: userEmail, // list of receivers
-      subject: 'Task Due Today', // Subject line
+      subject: "Task Due Today", // Subject line
       html: `<p>You have a task due today: ${task.title}</p>`, // html body
     };
 
     try {
       const info = await this.transporter.sendMail(mailOptions);
-      console.log('Message sent: %s', info.messageId);
+      console.log("Message sent: %s", info.messageId);
     } catch (error) {
-      console.error('Error occurred while sending email: ', error);
+      console.error("Error occurred while sending email: ", error);
     }
   }
 
   async sendEmail(mailOptions: object): Promise<void> {
     try {
       const info = await this.transporter.sendMail(mailOptions);
-      console.log('Message sent: %s', info.messageId);
+      console.log("Message sent: %s", info.messageId);
     } catch (error) {
-      console.error('Error occurred while sending email: ', error);
+      console.error("Error occurred while sending email: ", error);
     }
   }
 }

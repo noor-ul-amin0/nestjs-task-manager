@@ -1,14 +1,14 @@
-import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional, IsNotEmpty } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateTodolistDto {
-  @ApiProperty({ description: 'The title of the todolist' })
+  @ApiProperty({ description: "The title of the todolist" })
   @IsNotEmpty()
   @IsString()
   title: string;
 
   @ApiProperty({
-    description: 'The description of the todolist',
+    description: "The description of the todolist",
     required: false,
   })
   @IsString()

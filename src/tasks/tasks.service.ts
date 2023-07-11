@@ -2,16 +2,16 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { CreateTaskDto, UpdateTaskDto } from './dto/create-task.dto';
-import { User } from '../auth/users.model';
-import { InjectModel } from '@nestjs/sequelize';
-import { Task } from './tasks.model';
-import { TodolistService } from '../todolist/todolist.service';
-import * as moment from 'moment';
-import { Op } from 'sequelize';
-import { TodoList } from '../todolist/todolist.model';
-import { CacheService } from 'src/cache/cache.service';
+} from "@nestjs/common";
+import { CreateTaskDto, UpdateTaskDto } from "./dto/create-task.dto";
+import { User } from "../auth/users.model";
+import { InjectModel } from "@nestjs/sequelize";
+import { Task } from "./tasks.model";
+import { TodolistService } from "../todolist/todolist.service";
+import * as moment from "moment";
+import { Op } from "sequelize";
+import { TodoList } from "../todolist/todolist.model";
+import { CacheService } from "src/cache/cache.service";
 
 @Injectable()
 export class TasksService {
@@ -29,7 +29,7 @@ export class TasksService {
     });
     if (tasksCount > 50)
       throw new ForbiddenException(
-        'Maximum task limit reached. You are only allowed to create a maximum of 50 tasks.',
+        "Maximum task limit reached. You are only allowed to create a maximum of 50 tasks.",
       );
     const task = await this.taskModel.create({
       ...createTaskDto,
@@ -51,7 +51,7 @@ export class TasksService {
       const fetchedTasks = await this.taskModel.findAll({
         where: { todoListId: todolist.id },
         raw: true,
-        order: [['updatedAt', 'DESC']],
+        order: [["updatedAt", "DESC"]],
       });
       await this.cacheService.set(
         `tasks:${user.id}`,
@@ -118,14 +118,14 @@ export class TasksService {
 
     // Iterate through each task
     for (let i = 0; i < tasks.length; i++) {
-      const taskWords = tasks[i].title.toLowerCase().split(' ');
+      const taskWords = tasks[i].title.toLowerCase().split(" ");
       let isSimilar = false;
 
       // Compare task words with other tasks
       for (let j = 0; j < tasks.length; j++) {
         if (i !== j) {
           // Exclude the same task
-          const otherTaskWords = tasks[j].title.toLowerCase().split(' ');
+          const otherTaskWords = tasks[j].title.toLowerCase().split(" ");
 
           // Check if all words in task A exist in task B or vice versa
           isSimilar =
@@ -147,8 +147,8 @@ export class TasksService {
   }
 
   async getTasksDueToday(): Promise<Task[]> {
-    const todayStart = moment().startOf('day').toDate();
-    const todayEnd = moment().endOf('day').toDate();
+    const todayStart = moment().startOf("day").toDate();
+    const todayEnd = moment().endOf("day").toDate();
 
     return this.taskModel.findAll({
       where: {
@@ -158,11 +158,11 @@ export class TasksService {
       },
       include: {
         model: TodoList,
-        attributes: ['id'],
+        attributes: ["id"],
         include: [
           {
             model: User,
-            attributes: ['email'],
+            attributes: ["email"],
           },
         ],
       },
