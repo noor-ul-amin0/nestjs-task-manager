@@ -33,6 +33,10 @@ export class AuthService {
 
   //------------------------------------------------------------------------//
 
+  async getProfile(user: User): Promise<User> {
+    return this.userModel.findByPk(user.id, { raw: true });
+  }
+
   async signUp(createUserDto: CreateUserDto): Promise<string> {
     const { email, password, name } = createUserDto;
     const user = await this.userModel.findOne({
