@@ -33,7 +33,7 @@ import {
 } from "@nestjs/swagger";
 import { User } from "src/users/users.model";
 
-@ApiTags("tasks")
+@ApiTags("Tasks")
 @ApiBearerAuth()
 @Controller("tasks")
 @UseGuards(AuthGuard())

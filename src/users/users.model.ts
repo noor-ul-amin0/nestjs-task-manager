@@ -15,6 +15,14 @@ import { TodoList } from "../todolist/todolist.model";
 @Table({ tableName: "users" })
 export class User extends Model<User> {
   @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  id: number;
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })

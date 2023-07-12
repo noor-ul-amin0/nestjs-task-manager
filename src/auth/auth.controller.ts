@@ -17,6 +17,7 @@ import {
 } from "./dto/auth-credentials.dto";
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
@@ -24,18 +25,37 @@ import {
   ApiParam,
   ApiProperty,
   ApiResponse,
+  ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
+import { User } from "src/users/users.model";
+import { GetUser } from "./get-user.decorator";
+import { plainToClass } from "class-transformer";
+import { UserEntity } from "src/entites/serialized-user.entity";
 
 class AccessToken {
   @ApiProperty({ description: "JWT token for authentication" })
   accessToken: string;
 }
-
+@ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Get("/profile")
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: "User profile retrieved successfully",
+    type: User,
+  })
+  async getProfile(@GetUser() user: User): Promise<UserEntity> {
+    const userProfile = await this.authService.getProfile(user);
+    const serializedUser = plainToClass(UserEntity, userProfile);
+    return serializedUser;
+  }
 
   @Post("/signup")
   @ApiOperation({ summary: "Sign up a new user" })
