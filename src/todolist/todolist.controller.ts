@@ -14,7 +14,7 @@ import {
 } from "@nestjs/swagger";
 import { User } from "src/users/users.model";
 
-@ApiTags("todolist")
+@ApiTags("Todolist")
 @Controller("todolist")
 @UseGuards(AuthGuard())
 export class TodolistController {
