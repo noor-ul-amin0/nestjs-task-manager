@@ -10,9 +10,11 @@ import { SequelizeModule } from "@nestjs/sequelize";
 import { Dialect } from "sequelize";
 import { CacheModule } from "@nestjs/cache-manager";
 import { UsersModule } from "./users/users.module";
+import { ThrottlerModule, ThrottlerGuard } from "@nestjs/throttler";
+import { APP_GUARD } from "@nestjs/core";
+
 @Module({
   imports: [
-    AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.register({
       isGlobal: true,
@@ -26,13 +28,24 @@ import { UsersModule } from "./users/users.module";
       database: process.env.DB_NAME,
       autoLoadModels: true,
     }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 20,
+    }),
+    AuthModule,
     TodolistModule,
     TasksModule,
     ReportsModule,
     UsersModule,
   ],
   controllers: [],
-  providers: [MailService],
+  providers: [
+    MailService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
